@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const request = require("request");
 // const path = require("path");
 const https = require("https");
+require("dotenv").config();
 
 const app = express();
 
@@ -35,29 +36,36 @@ app.post("/", (req, res) => {
 
   const jsonData = JSON.stringify(data);
 
-  const url = "https://us14.api.mailchimp.com/3.0/lists/bcc3a4b6b0";
+  const apiKey = process.env.MAILCHIMP_API_KEY;
+  const listId = process.env.MAILCHIMP_LIST_ID;
+  const serverPrefix = process.env.MAILCHIMP_SERVER_PREFIX;
+
+  const url = `https://${serverPrefix}.api.mailchimp.com/3.0/lists/${listId}`;
 
   const options = {
     method: "POST",
-    auth: "codex:6b8b54a288c67746878da22249a4ae32-us14",
+    auth: `codex:${apiKey}`,
   };
 
   const request = https.request(url, options, (response) => {
     response.on("data", (data) => {
       console.log(JSON.parse(data));
+      console.log(response.statusCode);
     });
   });
+
+  if (res.statusCode === 200) {
+    res.sendFile(__dirname + "/success.html");
+    console.log(res.statusCode);
+  } else {
+    res.sendFile(__dirname + "/failure.html");
+    console.log(res.statusCode);
+  }
 
   request.write(jsonData);
   request.end();
 
   console.log(firstName, lastName, email);
-
-  if (res.statusCode === 200) {
-    res.sendFile(__dirname + "/success.html");
-  } else if (res.statusCode !== 200) {
-    res.sendFile(__dirname + "/failure.html");
-  }
 
   // res.send("Thanks for signing up");
 });
