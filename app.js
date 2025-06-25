@@ -73,7 +73,3 @@ app.post("/", (req, res) => {
 app.listen(4444, () => {
   console.log("server is following my lead on port 4444");
 });
-
-// 6b8b54a288c67746878da22249a4ae32-us14
-
-// bcc3a4b6b0
